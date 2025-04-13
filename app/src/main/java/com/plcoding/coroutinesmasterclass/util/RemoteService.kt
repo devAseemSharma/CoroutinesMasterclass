@@ -1,6 +1,7 @@
 package com.plcoding.coroutinesmasterclass.util
 
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.yield
 
 object RemoteService {
     suspend fun uploadFile() {
@@ -16,6 +17,7 @@ object RemoteService {
             } catch (e: Exception) {
                 println("Error uploading file: ${e.message}")
             }
+            yield()
         }
         println("Upload Complete")
     }

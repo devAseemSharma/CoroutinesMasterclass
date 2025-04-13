@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import com.plcoding.coroutinesmasterclass.util.RemoteService
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
 
 @Composable
 fun AssignmentOneScreen() {

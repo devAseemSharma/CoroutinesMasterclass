@@ -20,7 +20,9 @@ import androidx.lifecycle.lifecycleScope
 import com.plcoding.coroutinesmasterclass.sections.coroutine_learned_so_far.homework.BiometricPromptManager
 import com.plcoding.coroutinesmasterclass.sections.coroutine_learned_so_far.homework.BiometricResult
 import com.plcoding.coroutinesmasterclass.ui.theme.CoroutinesMasterclassTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.cancellation.CancellationException
@@ -45,7 +47,8 @@ class MainActivity : AppCompatActivity() {
 
                 LaunchedEffect(biometricsResult) {
                     if (biometricsResult != null) {
-                        Toast.makeText(context, biometricsResult.toString(), Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, biometricsResult.toString(), Toast.LENGTH_LONG)
+                            .show()
                         biometricsResult = null
                     }
                 }
@@ -66,7 +69,8 @@ class MainActivity : AppCompatActivity() {
 
                                     } catch (e: Exception) {
                                         if (e is CancellationException) {
-                                            Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG).show()
+                                            Toast.makeText(context, "Cancelled", Toast.LENGTH_LONG)
+                                                .show()
                                             throw e
                                         }
                                         e.printStackTrace()
@@ -74,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                                 if (result == null) {
                                     println("Timeout reached, cancelling...")
-                                    lifecycleScope.cancel()
+                                    lifecycleScope.cancelChildren()
                                 }
                             }
                         }
@@ -85,4 +89,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+}
+
+
+fun CoroutineScope.cancelChildren() {
+    coroutineContext.cancelChildren()
 }

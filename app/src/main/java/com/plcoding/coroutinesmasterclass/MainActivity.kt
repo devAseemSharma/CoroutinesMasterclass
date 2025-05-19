@@ -12,69 +12,43 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
+import com.plcoding.coroutinesmasterclass.sections.homework.LeaderBoard
+import com.plcoding.coroutinesmasterclass.sections.homework.LeaderboardListener
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // USE THIS TO RUN YOUR Leaderboard CLASS
-//        val leaderboard = Leaderboard()
-//
-//
-//        leaderboard.addListener { topScores: String ->
-//            println("New Top Scores:")
-//            println(topScores + "\n\n")
-//        }
-//
-//        GlobalScope.launch {
-//            (1..5_000).map { index ->
-//                launch {
-//                    val playerName = "Player $index"
-//                    val playerScore = Random.nextInt(1, 10_0000)
-//                    leaderboard.updateScore(playerName, playerScore)
-//                }
-//            }.joinAll()
-//            println("Completed!")
-//        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    suspend fun Context.getLocation(): Location {
-        return suspendCancellableCoroutine { continuation ->
-            val locationManager = getSystemService<LocationManager>()!!
-
-            val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
-                this@getLocation,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-            val hasCoarseLocationPermission = ActivityCompat.checkSelfPermission(
-                this@getLocation,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-
-            val signal = CancellationSignal()
-            if (hasFineLocationPermission && hasCoarseLocationPermission) {
-                locationManager.getCurrentLocation(
-                    LocationManager.NETWORK_PROVIDER,
-                    signal,
-                    mainExecutor
-                ) { location ->
-                    println("Got location: $location")
-                    continuation.resume(location)
+        leaderboard.addLeaderBoardListener(leaderBoardListener)
+        GlobalScope.launch {
+            (1..5_000).map { index ->
+                launch {
+                    val playerName = "Player $index"
+                    val playerScore = Random.nextInt(1, 10_0000)
+                    leaderboard.addNewScore(playerScore, playerName)
                 }
-            } else {
-                continuation.resumeWithException(
-                    RuntimeException("Missing location permission")
-                )
-            }
-
-            continuation.invokeOnCancellation {
-                signal.cancel()
-            }
+            }.joinAll()
+            println("Completed!")
         }
+    }
+    // USE THIS TO RUN YOUR Leaderboard CLASS
+    private val leaderboard = LeaderBoard()
+    private val leaderBoardListener =
+        LeaderboardListener { leaderboard ->
+            println("New Top Scores:")
+            println(leaderboard + "\n\n")
+        }
+
+    override fun onDestroy() {
+        leaderboard.removeLeaderBoardListener(leaderBoardListener)
+        super.onDestroy()
     }
 }

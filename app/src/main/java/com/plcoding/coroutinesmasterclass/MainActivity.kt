@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
+import com.plcoding.coroutinesmasterclass.homework.FlowAssignmentScreen
 import com.plcoding.coroutinesmasterclass.sections.coroutine_synchronization.synchronizationDemo
 import com.plcoding.coroutinesmasterclass.sections.flow_fundamentals.flowDemo
 import com.plcoding.coroutinesmasterclass.ui.theme.CoroutinesMasterclassTheme
@@ -39,10 +40,12 @@ class MainActivity : ComponentActivity() {
             0
         )
 
-        flowDemo()
+
 
         setContent {
-            CoroutinesMasterclassTheme {}
+            CoroutinesMasterclassTheme {
+                FlowAssignmentScreen()
+            }
         }
     }
 }
@@ -62,7 +65,7 @@ suspend fun Context.getLocation(): Location {
         ) == PackageManager.PERMISSION_GRANTED
 
         val signal = CancellationSignal()
-        if(hasFineLocationPermission && hasCoarseLocationPermission) {
+        if (hasFineLocationPermission && hasCoarseLocationPermission) {
             locationManager.getCurrentLocation(
                 LocationManager.NETWORK_PROVIDER,
                 signal,
